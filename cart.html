@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REWSO | Cart & Checkout</title>
+  <meta name="description" content="Review cart items and checkout." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cart-shell{width:min(1050px,92vw);margin:120px auto 60px;display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+    .panel{padding:22px}
+    .cart-item{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:12px;border:1px solid rgba(154,183,168,.2);border-radius:12px;margin-bottom:10px}
+    .qty{width:72px;padding:8px;border-radius:8px;border:1px solid rgba(154,183,168,.35);background:rgba(4,9,7,.7);color:var(--text)}
+    .remove{background:none;border:1px solid rgba(255,154,154,.5);color:#ff9a9a;padding:8px 12px;border-radius:999px;cursor:pointer}
+    .summary-line{display:flex;justify-content:space-between;margin:10px 0;color:var(--muted)}
+    .summary-line.total{font-weight:700;color:var(--text);font-size:1.1rem}
+    .checkout-form input{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:1px solid rgba(154,183,168,.25);background:rgba(4,9,7,.7);color:var(--text)}
+    .empty{color:var(--muted)}
+    @media(max-width:900px){.cart-shell{grid-template-columns:1fr}.cart-item{grid-template-columns:1fr auto}}
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+
+  <div class="nav">
+    <a href="index.html#home" class="brand magnetic">REWSO</a>
+    <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="nav-links">
+      <a href="products.html" class="nav-link magnetic">Products</a>
+      <a href="solar.html" class="nav-link magnetic">Solar</a>
+      <a href="battery.html" class="nav-link magnetic">Battery</a>
+      <a href="cart.html" class="nav-link magnetic">Cart</a>
+    </div>
+  </div>
+
+  <main class="cart-shell">
+    <section class="service-card panel reveal-up">
+      <h2 style="font-family:Montserrat,sans-serif">Open Cart</h2>
+      <p class="empty" id="emptyState" style="display:none">Your cart is empty. Add products from the products page.</p>
+      <div id="cartItems"></div>
+      <a href="products.html" class="btn-secondary magnetic" style="display:inline-block;margin-top:10px;padding:11px 14px;border:1px solid rgba(154,183,168,.35);border-radius:999px">Continue Shopping</a>
+    </section>
+
+    <aside class="service-card panel reveal-up">
+      <h2 style="font-family:Montserrat,sans-serif">Checkout</h2>
+      <div class="summary-line"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+      <div class="summary-line"><span>Shipping</span><span>₹0</span></div>
+      <div class="summary-line total"><span>Total</span><span id="total">₹0</span></div>
+
+      <form id="checkoutForm" class="checkout-form" style="margin-top:14px">
+        <input type="text" id="customerName" placeholder="Full Name" required>
+        <input type="email" id="customerEmail" placeholder="Email" required>
+        <input type="text" id="customerAddress" placeholder="Address" required>
+        <button class="btn magnetic" type="submit">Checkout</button>
+      </form>
+      <p id="checkoutMsg" style="margin-top:10px;color:var(--greenSoft)"></p>
+    </aside>
+  </main>
+
+  <footer><span>REWSO Renewable Energy Solutions</span><span>Innovation | Reliability | Sustainability | Global Impact</span></footer>
+
+  <script>
+    const CART_KEY = "rewso_cart";
+
+    function readCart() {
+      try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; }
+    }
+
+    function writeCart(cart) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function money(n) { return `₹${n.toFixed(2)}`; }
+
+    function renderCart() {
+      const cartItems = document.getElementById("cartItems");
+      const emptyState = document.getElementById("emptyState");
+      const subtotalEl = document.getElementById("subtotal");
+      const totalEl = document.getElementById("total");
+      const cart = readCart();
+
+      cartItems.innerHTML = "";
+
+      if (!cart.length) {
+        emptyState.style.display = "block";
+      } else {
+        emptyState.style.display = "none";
+        cart.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "cart-item";
+          row.innerHTML = `
+            <div>
+              <strong>${item.name}</strong><br>
+              <small style="color:var(--muted)">${money(item.price)} each</small>
+            </div>
+            <input class="qty" type="number" min="1" value="${item.qty}" data-id="${item.id}">
+            <strong>${money(item.price * item.qty)}</strong>
+            <button class="remove" data-remove="${item.id}" type="button">Remove</button>
+          `;
+          cartItems.appendChild(row);
+        });
+      }
+
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      subtotalEl.textContent = money(subtotal);
+      totalEl.textContent = money(subtotal);
+
+      document.querySelectorAll(".qty[data-id]").forEach((input) => {
+        input.addEventListener("change", () => {
+          const id = input.dataset.id;
+          const qty = Math.max(1, Number(input.value || 1));
+          const updated = readCart().map((item) => item.id === id ? { ...item, qty } : item);
+          writeCart(updated);
+          renderCart();
+        });
+      });
+
+      document.querySelectorAll("button[data-remove]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.remove;
+          const updated = readCart().filter((item) => item.id !== id);
+          writeCart(updated);
+          renderCart();
+        });
+      });
+    }
+
+    document.getElementById("checkoutForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const cart = readCart();
+      const msg = document.getElementById("checkoutMsg");
+      if (!cart.length) {
+        msg.textContent = "Add at least one product before checkout.";
+        return;
+      }
+      localStorage.removeItem(CART_KEY);
+      renderCart();
+      e.target.reset();
+      msg.textContent = "Checkout complete. Order placed successfully.";
+    });
+
+    document.addEventListener("DOMContentLoaded", renderCart);
+  </script>
+  <script src="script.js" defer></script>
+</body>
+</html>
