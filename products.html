@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REWSO | Products</title>
+  <meta name="description" content="Browse REWSO products: Solar Panel Pro and Battery Vault." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://unpkg.com/lenis@1.1.16/dist/lenis.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js" defer></script>
+  <style>
+    .products-shell{width:min(1150px,92vw);margin:120px auto 0;padding-bottom:60px}
+    .products-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+    .search-wrap{margin:0 0 20px}
+    .search-input{width:min(420px,100%);padding:12px 14px;border-radius:12px;border:1px solid rgba(154,183,168,.35);background:rgba(4,9,7,.7);color:var(--text)}
+    .products-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+    .product-card{padding:22px;display:flex;flex-direction:column;gap:12px;min-height:420px}
+    .product-image{width:100%;height:190px;object-fit:cover;border-radius:14px;border:1px solid rgba(154,183,168,.2)}
+    .price{font:700 1.4rem Montserrat,sans-serif;color:var(--greenSoft)}
+    .spec-list{padding-left:16px;color:var(--muted);line-height:1.7}
+    .card-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:auto}
+    .qty{width:84px;padding:10px;border-radius:10px;border:1px solid rgba(154,183,168,.35);background:rgba(4,9,7,.7);color:var(--text)}
+    .btn-secondary{padding:12px 16px;border-radius:999px;border:1px solid rgba(154,183,168,.35);color:var(--text);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+    .cart-count{font-weight:700;color:var(--greenSoft)}
+    .no-results{display:none;color:var(--muted);padding:4px 4px 0}
+    @media(max-width:900px){.products-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+
+  <div class="nav">
+    <a href="index.html#home" class="brand magnetic">REWSO</a>
+    <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="nav-links">
+      <a href="index.html#home" class="nav-link magnetic">Home</a>
+      <a href="index.html#about" class="nav-link magnetic">About</a>
+      <a href="products.html" class="nav-link magnetic">Products</a>
+      <a href="stories.html" class="nav-link magnetic">Stories</a>
+      <a href="cart.html" class="nav-link magnetic">Cart <span class="cart-count" id="navCartCount">(0)</span></a>
+    </div>
+  </div>
+
+  <main class="products-shell">
+    <div class="products-top">
+      <div>
+        <span class="tag">Products</span>
+        <h1 style="font-family:Montserrat,sans-serif;font-size:clamp(1.8rem,4vw,3rem)">Choose Your Energy Product</h1>
+      </div>
+      <a href="cart.html" class="btn magnetic">Open Cart</a>
+    </div>
+
+    <div class="search-wrap">
+      <input id="productSearch" class="search-input" type="search" placeholder="Search products (solar, battery, efficiency...)" aria-label="Search products">
+      <p id="noResults" class="no-results">No products matched your search.</p>
+    </div>
+
+    <section class="products-grid">
+      <article class="service-card product-card reveal-up tilt-card" data-product-card data-search="solar panel pro monocrystalline rooftop 550w efficiency 23.4 warranty">
+        <div class="icon">S</div>
+        <img class="product-image" loading="lazy" src="https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1200&q=80" alt="Solar Panel Pro product image">
+        <h3 style="font-family:Montserrat,sans-serif">Solar Panel Pro</h3>
+        <p class="price">₹499</p>
+        <p>High-efficiency monocrystalline panel designed for residential and commercial rooftops.</p>
+        <strong>Specifications</strong>
+        <ul class="spec-list">
+          <li>Peak Power: 550W</li>
+          <li>Efficiency: 23.4%</li>
+          <li>Warranty: 25 Years</li>
+          <li>Operating Temp: -40C to 85C</li>
+        </ul>
+        <div class="card-actions">
+          <input class="qty" type="number" min="1" value="1" id="qty-solar" />
+          <button class="btn magnetic add-to-cart" data-product="solar" data-qty-id="qty-solar" type="button">Add to Cart</button>
+          <a class="btn-secondary magnetic" href="solar.html">View Details</a>
+        </div>
+      </article>
+
+      <article class="service-card product-card reveal-up tilt-card" data-product-card data-search="battery vault lithium storage 10kwh cycle life bms thermal">
+        <div class="icon">B</div>
+        <img class="product-image" loading="lazy" src="assets\images\products\BR-0.jpg" alt="Battery Vault product image">
+        <h3 style="font-family:Montserrat,sans-serif">Battery Vault</h3>
+        <p class="price">₹799</p>
+        <p>Smart lithium storage unit for stable backup, peak-shaving, and load balancing.</p>
+        <strong>Specifications</strong>
+        <ul class="spec-list">
+          <li>Capacity: 10 kWh</li>
+          <li>Cycle Life: 6000 Cycles</li>
+          <li>Round-trip Efficiency: 95%</li>
+          <li>Protection: Thermal + BMS</li>
+        </ul>
+        <div class="card-actions">
+          <input class="qty" type="number" min="1" value="1" id="qty-battery" />
+          <button class="btn magnetic add-to-cart" data-product="battery" data-qty-id="qty-battery" type="button">Add to Cart</button>
+          <a class="btn-secondary magnetic" href="battery.html">View Details</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer><span>REWSO Renewable Energy Solutions</span><span>Innovation | Reliability | Sustainability | Global Impact</span></footer>
+
+  <script src="script.js" defer></script>
+  <script>
+    const CART_KEY = "rewso_cart";
+    const PRODUCTS = {
+      solar: { id: "solar", name: "Solar Panel Pro", price: 499 },
+      battery: { id: "battery", name: "Battery Vault", price: 799 }
+    };
+
+    function readCart() {
+      try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; }
+    }
+
+    function writeCart(cart) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function cartCount(cart) {
+      return cart.reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function updateCount() {
+      const countEl = document.getElementById("navCartCount");
+      if (!countEl) return;
+      const count = cartCount(readCart());
+      countEl.textContent = `(${count})`;
+    }
+
+    function addToCart(productId, qty) {
+      const product = PRODUCTS[productId];
+      if (!product) return;
+      const cart = readCart();
+      const existing = cart.find((item) => item.id === productId);
+      if (existing) existing.qty += qty;
+      else cart.push({ ...product, qty });
+      writeCart(cart);
+      updateCount();
+      alert(product.name + " added to cart.");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCount();
+      document.querySelectorAll(".add-to-cart").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const input = document.getElementById(btn.dataset.qtyId);
+          const qty = Math.max(1, Number(input && input.value ? input.value : 1));
+          addToCart(btn.dataset.product, qty);
+        });
+      });
+
+      const searchInput = document.getElementById("productSearch");
+      const cards = [...document.querySelectorAll("[data-product-card]")];
+      const noResults = document.getElementById("noResults");
+      if (searchInput && cards.length) {
+        searchInput.addEventListener("input", () => {
+          const query = searchInput.value.trim().toLowerCase();
+          let visible = 0;
+          cards.forEach((card) => {
+            const haystack = (card.dataset.search || "").toLowerCase();
+            const match = !query || haystack.includes(query);
+            card.style.display = match ? "" : "none";
+            if (match) visible += 1;
+          });
+          if (noResults) noResults.style.display = visible ? "none" : "block";
+        });
+      }
+    });
+  </script>
+</body>
+</html>
